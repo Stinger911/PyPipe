@@ -1,5 +1,5 @@
 import unittest
-from pypipe.core import Pipeline, DataSource, DataSink, Transformation
+from pypipe.core import Pipeline, DataSource, DataSink, Transformation, FunctionalTransformation
 from typing import Any, Iterable, List
 
 # Mock components for testing
@@ -106,6 +106,21 @@ class TestPipeline(unittest.TestCase):
 
         # The order should be: uppercase -> reverse -> exclaim
         self.assertEqual(sink.data, ["C!", "B!", "A!"])
+
+    def test_functional_transformation(self):
+        initial_data = ["a", "b", "c"]
+        source = MockDataSource(initial_data)
+
+        uppercase = FunctionalTransformation(lambda data: (item.upper() for item in data))
+        
+        sink = MockDataSink()
+
+        pipeline = Pipeline(source)
+        pipeline.add(uppercase).to(sink)
+
+        pipeline.run()
+
+        self.assertEqual(sink.data, ["A", "B", "C"])
 
 
 if __name__ == '__main__':

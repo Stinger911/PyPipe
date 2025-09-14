@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Iterable, List
+from typing import Any, Callable, Iterable, List
 
 # --- Framework Core ---
 
@@ -16,6 +16,14 @@ class Transformation(ABC):
     def process(self, data: Iterable[Any]) -> Iterable[Any]:
         """Process the data and return an iterable of the transformed data."""
         pass
+
+class FunctionalTransformation(Transformation):
+    """A transformation that applies a function to the data."""
+    def __init__(self, process_func: Callable[[Iterable[Any]], Iterable[Any]]):
+        self._process_func = process_func
+
+    def process(self, data: Iterable[Any]) -> Iterable[Any]:
+        return self._process_func(data)
 
 class DataSink(ABC):
     """Abstract base class for data sinks."""
