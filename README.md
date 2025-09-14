@@ -99,6 +99,23 @@ pipeline.to(ConsoleSink())
 pipeline.run()
 ```
 
+### Transformation Decorator
+
+For even more convenience, you can use the `@transformation` decorator to turn a function into a `Transformation` instance.
+
+```python
+from pypipe.core import transformation
+
+@transformation
+def uppercase(data):
+    return (item.upper() for item in data)
+
+pipeline = Pipeline(ListSource(["hello", "world"]))
+pipeline.add(uppercase)
+pipeline.to(ConsoleSink())
+pipeline.run()
+```
+
 ### Adding Transformations at Arbitrary Positions
 
 You can insert a transformation at a specific index in the pipeline.

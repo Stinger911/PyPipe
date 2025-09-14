@@ -79,6 +79,10 @@ class Pipeline:
                 else:
                     step.write(data)
 
+def transformation(func: Callable[[Iterable[Any]], Iterable[Any]]) -> FunctionalTransformation:
+    """Decorator to turn a function into a Transformation."""
+    return FunctionalTransformation(func)
+
 # --- Default Components ---
 
 class ListSource(DataSource):

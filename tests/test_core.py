@@ -1,5 +1,5 @@
 import unittest
-from pypipe.core import Pipeline, DataSource, DataSink, Transformation, FunctionalTransformation
+from pypipe.core import Pipeline, DataSource, DataSink, Transformation, FunctionalTransformation, transformation
 from typing import Any, Iterable, List
 
 # Mock components for testing
@@ -112,6 +112,23 @@ class TestPipeline(unittest.TestCase):
         source = MockDataSource(initial_data)
 
         uppercase = FunctionalTransformation(lambda data: (item.upper() for item in data))
+        
+        sink = MockDataSink()
+
+        pipeline = Pipeline(source)
+        pipeline.add(uppercase).to(sink)
+
+        pipeline.run()
+
+        self.assertEqual(sink.data, ["A", "B", "C"])
+
+    def test_transformation_decorator(self):
+        initial_data = ["a", "b", "c"]
+        source = MockDataSource(initial_data)
+
+        @transformation
+        def uppercase(data):
+            return (item.upper() for item in data)
         
         sink = MockDataSink()
 
