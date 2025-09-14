@@ -1,0 +1,20 @@
+[project]
+name = "pypipe"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Andrew Abramov",email = "stinger911@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "ruff (>=0.13.0,<0.14.0)"
+]
+
+[tool.poetry]
+packages = [{include = "pypipe", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
