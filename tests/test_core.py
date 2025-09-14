@@ -86,6 +86,27 @@ class TestPipeline(unittest.TestCase):
 
         self.assertEqual(sink.data, ["hello", "world", "foo", "bar"])
 
+    def test_add_at_index(self):
+        initial_data = ["a", "b", "c"]
+        source = MockDataSource(initial_data)
+
+        uppercase = MockTransformation(lambda data: [item.upper() for item in data])
+        exclaim = MockTransformation(lambda data: [f"{item}!" for item in data])
+        reverse = MockTransformation(lambda data: list(reversed(list(data))))
+
+        sink = MockDataSink()
+
+        pipeline = Pipeline(source)
+        pipeline.add(uppercase).add(exclaim).to(sink)
+
+        # Insert the reverse transformation at index 1 (after uppercase)
+        pipeline.add(reverse, index=1)
+
+        pipeline.run()
+
+        # The order should be: uppercase -> reverse -> exclaim
+        self.assertEqual(sink.data, ["C!", "B!", "A!"])
+
 
 if __name__ == '__main__':
     unittest.main()

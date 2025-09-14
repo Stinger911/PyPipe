@@ -32,9 +32,15 @@ class Pipeline:
         self._source = source
         self._steps: List[Transformation | DataSink] = []
 
-    def add(self, transformation: Transformation) -> "Pipeline":
-        """Adds a transformation step to the pipeline."""
-        self._steps.append(transformation)
+    def add(self, transformation: Transformation, index: int | None = None) -> "Pipeline":
+        """
+        Adds a transformation step to the pipeline.
+        By default, it's added to the end.
+        """
+        if index is None:
+            self._steps.append(transformation)
+        else:
+            self._steps.insert(index, transformation)
         return self
 
     def to(self, sink: DataSink) -> "Pipeline":
