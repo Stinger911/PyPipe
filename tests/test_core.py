@@ -1,36 +1,50 @@
 import unittest
-from pypipe.core import Pipeline, DataSource, DataSink, Transformation, FunctionalTransformation, transformation
 from typing import Any, Iterable, List
+
+from pypipe.core import (
+    DataSink,
+    DataSource,
+    FunctionalTransformation,
+    Pipeline,
+    Transformation,
+    transformation,
+)
+
 
 # Mock components for testing
 class MockDataSource(DataSource):
     def __init__(self, data: List[Any]):
         self._data = data
+
     def read(self) -> Iterable[Any]:
         return self._data
+
 
 class MockTransformation(Transformation):
     def __init__(self, transformation_func):
         self.transformation_func = transformation_func
+
     def process(self, data: Iterable[Any]) -> Iterable[Any]:
         return self.transformation_func(data)
+
 
 class MockDataSink(DataSink):
     def __init__(self):
         self.data = []
+
     def write(self, data: Iterable[Any]) -> None:
         self.data.extend(list(data))
 
-class TestPipeline(unittest.TestCase):
 
+class TestPipeline(unittest.TestCase):
     def test_multiple_sinks(self):
         # 1. Prepare the initial dataset and mock components
         initial_data = ["a", "b", "c"]
         source = MockDataSource(initial_data)
-        
+
         uppercase = MockTransformation(lambda data: [item.upper() for item in data])
         exclaim = MockTransformation(lambda data: [f"{item}!" for item in data])
-        
+
         sink1 = MockDataSink()
         sink2 = MockDataSink()
 
@@ -51,7 +65,9 @@ class TestPipeline(unittest.TestCase):
         source = MockDataSource(initial_data)
 
         # This transformation returns a generator
-        uppercase_generator = MockTransformation(lambda data: (item.upper() for item in data))
+        uppercase_generator = MockTransformation(
+            lambda data: (item.upper() for item in data)
+        )
         exclaim = MockTransformation(lambda data: [f"{item}!" for item in data])
 
         sink1 = MockDataSink()
@@ -74,9 +90,9 @@ class TestPipeline(unittest.TestCase):
             for sentence in data:
                 for word in sentence.split():
                     yield word
-        
+
         splitter = MockTransformation(split_into_words)
-        
+
         sink = MockDataSink()
 
         pipeline = Pipeline(source)
@@ -111,8 +127,10 @@ class TestPipeline(unittest.TestCase):
         initial_data = ["a", "b", "c"]
         source = MockDataSource(initial_data)
 
-        uppercase = FunctionalTransformation(lambda data: (item.upper() for item in data))
-        
+        uppercase = FunctionalTransformation(
+            lambda data: (item.upper() for item in data)
+        )
+
         sink = MockDataSink()
 
         pipeline = Pipeline(source)
@@ -129,7 +147,7 @@ class TestPipeline(unittest.TestCase):
         @transformation
         def uppercase(data):
             return (item.upper() for item in data)
-        
+
         sink = MockDataSink()
 
         pipeline = Pipeline(source)
@@ -140,5 +158,5 @@ class TestPipeline(unittest.TestCase):
         self.assertEqual(sink.data, ["A", "B", "C"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

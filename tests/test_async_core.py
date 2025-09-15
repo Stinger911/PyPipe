@@ -1,17 +1,15 @@
-import unittest
 import asyncio
-from typing import Any, AsyncIterable, List, Callable
+import unittest
+from typing import Any, AsyncIterable, List
 
 from pypipe.async_core import (
-    AsyncDataSource,
-    AsyncTransformation,
     AsyncDataSink,
-    AsyncPipeline,
+    AsyncDataSource,
     AsyncFunctionalTransformation,
+    AsyncPipeline,
     async_transformation,
-    AsyncListSource,
-    AsyncConsoleSink,
 )
+
 
 # Mock components for testing
 class MockAsyncDataSource(AsyncDataSource):
@@ -22,6 +20,7 @@ class MockAsyncDataSource(AsyncDataSource):
         for item in self._data:
             yield item
 
+
 class MockAsyncDataSink(AsyncDataSink):
     def __init__(self):
         self.data = []
@@ -30,8 +29,8 @@ class MockAsyncDataSink(AsyncDataSink):
         async for item in data:
             self.data.append(item)
 
-class TestAsyncPipeline(unittest.IsolatedAsyncioTestCase):
 
+class TestAsyncPipeline(unittest.IsolatedAsyncioTestCase):
     async def test_simple_pipeline(self):
         source = MockAsyncDataSource([1, 2, 3])
         sink = MockAsyncDataSink()
@@ -105,5 +104,37 @@ class TestAsyncPipeline(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(sink.data, ["A", "B", "C"])
 
-if __name__ == '__main__':
+    async def test_async_transformation(self):
+        source = MockAsyncDataSource([1, 2, 3])
+        sink = MockAsyncDataSink()
+        executed = []
+
+        @async_transformation
+        async def async_increment(data):
+            async for item in data:
+                print(f"[inc] Processing {item} asynchronously")
+                executed.append(f"inc:{item}")
+                await asyncio.sleep(1)  # Simulate async work
+                yield item + 1
+
+        @async_transformation
+        async def async_to_str(data):
+            async for item in data:
+                print(f"[str] Converting {item} to string asynchronously")
+                executed.append(f"str:{item}")
+                await asyncio.sleep(0.5)  # Simulate async work
+                yield str(item)
+
+        pipeline = AsyncPipeline(source)
+        pipeline.add(async_increment).add(async_to_str).to(sink)
+
+        await pipeline.run()
+
+        self.assertEqual(sink.data, ["2", "3", "4"])
+        self.assertEqual(
+            executed, ["inc:1", "str:2", "inc:2", "str:3", "inc:3", "str:4"]
+        )
+
+
+if __name__ == "__main__":
     unittest.main()
