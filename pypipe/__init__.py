@@ -13,8 +13,19 @@ from .core import (
     ConsoleSink,
     FileSink,
 )
+from .async_core import (
+    AsyncDataSource,
+    AsyncTransformation,
+    AsyncFunctionalTransformation,
+    async_transformation,
+    AsyncDataSink,
+    AsyncPipeline,
+    AsyncListSource,
+    AsyncConsoleSink,
+)
 
 __all__ = [
+    # Sync
     "DataSource",
     "Transformation",
     "FunctionalTransformation",
@@ -24,4 +35,13 @@ __all__ = [
     "ListSource",
     "ConsoleSink",
     "FileSink",
+    # Async
+    "AsyncDataSource",
+    "AsyncTransformation",
+    "AsyncFunctionalTransformation",
+    "async_transformation",
+    "AsyncDataSink",
+    "AsyncPipeline",
+    "AsyncListSource",
+    "AsyncConsoleSink",
 ]
