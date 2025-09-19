@@ -23,9 +23,7 @@ class AsyncTransformation(ABC):
 class AsyncFunctionalTransformation(AsyncTransformation):
     """An async transformation that applies an async function to the data."""
 
-    def __init__(
-        self, process_func: Callable[[AsyncIterable[Any]], AsyncIterable[Any]]
-    ):
+    def __init__(self, process_func: Callable[[AsyncIterable[Any]], AsyncIterable[Any]]) -> None:
         self._process_func = process_func
 
     def process(self, data: AsyncIterable[Any]) -> AsyncIterable[Any]:
@@ -50,7 +48,7 @@ class AsyncDataSink(ABC):
 class AsyncPipeline:
     """An asynchronous declarative pipeline to chain data processing steps."""
 
-    def __init__(self, source: AsyncDataSource):
+    def __init__(self, source: AsyncDataSource) -> None:
         self._source = source
         self._steps: List[AsyncTransformation | AsyncDataSink] = []
 
@@ -96,7 +94,7 @@ class AsyncPipeline:
 class AsyncListSource(AsyncDataSource):
     """A simple async data source that reads from a Python list."""
 
-    def __init__(self, data: List[Any]):
+    def __init__(self, data: List[Any]) -> None:
         self._data = data
 
     async def read(self) -> AsyncIterable[Any]:
